@@ -1,2 +1,2 @@
-# hackallthethings.xyz
-My website at www.hackallthethings.xyz
+# Website
+My website
