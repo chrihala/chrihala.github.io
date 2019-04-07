@@ -7,7 +7,7 @@ layout: default
     <div class="container">
         <header>
             <h2>{{ page.title }}</h2>
-            <p>Writtten by {{ page.author }} on {{ page.date | date_to_long_string: "ordinal" }}</p>
+            <p>Writtten by {{ page.author }} on {{ page.date | date: '%B %d, %Y' }}</p>
         </header>
 
     <section class="post">
