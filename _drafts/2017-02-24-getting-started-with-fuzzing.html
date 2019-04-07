@@ -1,0 +1,12 @@
+---
+layout: post
+title: 'Getting started with Fuzzing '
+date: '2017-02-24T15:48:00.001-08:00'
+author: Hland
+tags: 
+modified_time: '2017-02-24T15:48:54.593-08:00'
+blogger_id: tag:blogger.com,1999:blog-3264165303439231899.post-1728877646895849949
+blogger_orig_url: https://blankhat.blogspot.com/2017/02/getting-started-with-fuzzing.html
+---
+
+I have been wanting to do a better job at fuzzing for a long long time. Fuzzing finds a lot of bugs, especially in code that parses stuff like files or urls so I think it should be an important part of my toolkit.<br /><br />One of the tools I've heard a lot about is American Fuzzy Lop or AFL. (http://lcamtuf.coredump.cx/afl/) So I thought a good starting point would be to learn how to use this fuzzing tool and perhaps move from there.<br /><br />When looking to learn more about fuzzing tools in the past I've looked to tools or frameworks such as SPIKE, <a href="https://github.com/OpenRCE/sulley" target="_blank">Sulley</a>&nbsp;and <a href="http://www.peachfuzzer.com/" target="_blank">Peach</a>.<br /><br /><br /><br /><h4>Getting started&nbsp;</h4>http://lcamtuf.coredump.cx/afl/QuickStartGuide.txt<br /><br /><h4>Instrumenting</h4>If we have the sourcecode and we want to fuzz a binary we can compile it using afl-gcc or g++. This instruments the program, which basically means we make it ready for fuzzing.<br /><br /><h4>Starting and Resuming a fuzz-session</h4><div>The afl-fuzz program is the fuzzer itself. It can be used like this:</div><div><br /></div><div>./afl-fuzz -i test_cases/ -o test_results/ vulnerable_binary&nbsp;@@</div><div><br /></div><div>To resume an interrupted session:</div><div><pre style="white-space: pre-wrap; word-wrap: break-word;">./afl-fuzz -i- -o existing_output_dir [...etc...]</pre></div><h4><br /></h4><h4>Finding a bug</h4><div>Read all about it:</div><div>http://lcamtuf.coredump.cx/afl/README.txt</div><div><br /></div><div><br /></div>

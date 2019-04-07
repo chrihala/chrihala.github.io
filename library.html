@@ -5,12 +5,12 @@ permalink: /library/
 ---
 
 <!-- Library -->
-<section id="library" class="two">
+<div id="library">
+<section>
     <div class="container">
-
-        <header>
-            <h2>Library</h2>
-        </header>
+    <header>
+        <h2>Library</h2>
+    </header>
 
     {% assign items_grouped = site.data.library | group_by: 'category' | sort: 'name' %}
 
@@ -20,17 +20,18 @@ permalink: /library/
             <h2>{{ category.name }}</h2>
 
             <ul>
-            {% assign items = category.items | sort: 'title' %}
-            {% for item in items %}
+                {% assign items = category.items | sort: 'title' %}
+                {% for item in items %}
                 <li>
                     <a href="{{ item.link }}" target="_blank" _rel="noreferrer noopen">{{ item.title }}</a>
                 </li>
-            {% endfor %}
+                {% endfor %}
             </ul>
         </div>
         {% endfor %}
     </div>
 
 
+    </div>
+    </section>
 </div>
-</section>

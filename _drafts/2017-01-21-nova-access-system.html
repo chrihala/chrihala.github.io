@@ -1,0 +1,12 @@
+---
+layout: post
+title: Nova Access System
+date: '2017-01-21T00:42:00.000-08:00'
+author: Hland
+tags: 
+modified_time: '2017-01-21T00:42:56.632-08:00'
+blogger_id: tag:blogger.com,1999:blog-3264165303439231899.post-2636633151433724755
+blogger_orig_url: https://blankhat.blogspot.com/2017/01/nova-access-system.html
+---
+
+http://www.scantron.dk/download/  NovaServer Software sold as FlexAir   - Access card system. Firmware updates available from site.  - Unauthenticated Telnet access via TCP 3543 gives full admin access to console. - DB access to SQLlite containing users MD5 (!) hashes. (could be some salting?) - Hashes of SuperAdmin and another user can be found.   - Python Web API that the Flash client in the browser communicates with. This API looks very weak and you may be able to use some hidden accounts that are found as strings in the API exe to login to.  - There may be SQL injection and CSRF vulns.  - There is also references to an account called fire_python and there is a python client (I think) in among the Python files on the server. - There is no option to enable HTTPS for the admin panel. - Pincodes can not start with 0. - Can we open / lock doors with CSRF? Would make a cool PoC.  

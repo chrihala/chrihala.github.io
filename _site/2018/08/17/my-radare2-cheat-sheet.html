@@ -1,0 +1,19 @@
+<!DOCTYPE HTML><html><head><title>Hackallthethings.xyz</title><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /><link rel="stylesheet" href="/assets/css/main.css" /><link href="/assets/css/syntax.css" rel="stylesheet" /></head><body class="is-preload"><div id="header"><div class="top"><div id="logo"> <span class="image avatar48"><img src="/assets/images/avatar.jpg" alt="" /></span><h1 id="title">Hland</h1><p></p></div><nav id="nav"><ul><li><a href="/" id="top-link"><span class="icon fa-user">whoami</span></a></li><li><a href="/library"><span class="icon fa-book">Library</span></a></li><li><a href="/weblog"><span class="icon fa-rss">Weblog</span></a></li></ul></nav></div><div class="bottom"><ul class="icons"><li><a href="https://twitter.com/vladthegad" target="_blank" _rel="noreferrer noopen" class="icon fa-twitter"><span class="label">Twitter</span></a></li><li><a href="https://lmgtfy.com/?q=Privacy+is+not+dead" target="_blank" _rel="noreferrer noopen" class="icon fa-facebook"><span class="label">Facebook</span></a></li><li><a href="https://hackerone.com/hland" target="_blank" _rel="noreferrer noopen" class="icon"><span class="label">HackerOne</span></a></li></ul></div></div><section id="weblog" class="two"><div class="container"><header><h2>My Radare2 Cheat Sheet</h2><p>Writtten by Hland on 17th August 2018</p></header><section class="post"><h2 id="renaming">Renaming</h2><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># rename a function
+s &lt;function_flag&gt;
+afvn [new_name]
+
+# List local function variables
+afv
+# Rename variable
+afvn [old_name] [new_name]
+
+</code></pre></div></div><h2 id="telescoping-stack-view">Telescoping stack view</h2><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pxr @ esp
+</code></pre></div></div><h2 id="find-symbols-in-libc">Find symbols in libc</h2><p><code class="highlighter-rouge">dmi libc system</code></p><h2 id="search-for-strings">Search for strings</h2><p><code class="highlighter-rouge">/ /bin/sh @ &lt;address&gt;</code></p><h2 id="some-gdb-debugging-tricks-as-well">Some GDB Debugging tricks as well</h2><p>Inspect the stack</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x/100b $esp
+x/100s $esp
+x/100x $esp
+</code></pre></div></div><p>Disassemble some code:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>disassemble main
+</code></pre></div></div><p>Set a breakpoint:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>break *0xcafebabe
+</code></pre></div></div><p>Go to debug mode:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ctrl^x ctrl^a
+layout asm 
+layout regs
+</code></pre></div></div><h2 id="an-out-of-place-strace-command">An out of place Strace Command</h2><p>To trace only file access: <code class="highlighter-rouge">strace -e trace=file ./utumno1.out testtest</code></p><p>Similarly for network, process, ipc or memory: <code class="highlighter-rouge">strace -e trace=network ./utumno1.out testtest</code></p><p><code class="highlighter-rouge">strace -e trace=process ./utumno1.out testtest</code></p><p><code class="highlighter-rouge">strace -e trace=ipc ./utumno1.out testtest</code></p><p><code class="highlighter-rouge">strace -e trace=memory ./utumno1.out testtest</code></p><p>This is very useful for reversing what a binary is doing when there’s no symbols and the debugger is failing us.</p></section></div></section><script src="/assets/js/jquery.min.js"></script> <script src="/assets/js/jquery.scrolly.min.js"></script> <script src="/assets/js/jquery.scrollex.min.js"></script> <script src="/assets/js/browser.min.js"></script> <script src="/assets/js/breakpoints.min.js"></script> <script src="/assets/js/util.js"></script> <script src="/assets/js/main.js"></script></body></html>

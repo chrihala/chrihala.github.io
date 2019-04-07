@@ -1,0 +1,79 @@
+<!DOCTYPE HTML><html><head><title>Hackallthethings.xyz</title><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" /><link rel="stylesheet" href="/assets/css/main.css" /><link href="/assets/css/syntax.css" rel="stylesheet" /></head><body class="is-preload"><div id="header"><div class="top"><div id="logo"> <span class="image avatar48"><img src="/assets/images/avatar.jpg" alt="" /></span><h1 id="title">Hland</h1><p></p></div><nav id="nav"><ul><li><a href="/" id="top-link"><span class="icon fa-user">whoami</span></a></li><li><a href="/library"><span class="icon fa-book">Library</span></a></li><li><a href="/weblog"><span class="icon fa-rss">Weblog</span></a></li></ul></nav></div><div class="bottom"><ul class="icons"><li><a href="https://twitter.com/vladthegad" target="_blank" _rel="noreferrer noopen" class="icon fa-twitter"><span class="label">Twitter</span></a></li><li><a href="https://lmgtfy.com/?q=Privacy+is+not+dead" target="_blank" _rel="noreferrer noopen" class="icon fa-facebook"><span class="label">Facebook</span></a></li><li><a href="https://hackerone.com/hland" target="_blank" _rel="noreferrer noopen" class="icon"><span class="label">HackerOne</span></a></li></ul></div></div><section id="weblog" class="two"><div class="container"><header><h2>Debugging a Forking Server with r2</h2><p>Writtten by Hland on 21st January 2018</p></header><section class="post"><p>This post will show you how to debug a forking server using <a href="https://github.com/radare/radare2">Radare2</a>. It will not show how to solve this challenge though, there are probably some good write-ups out there if you know where to look.</p><p>The example program is a 150 point reversing CTF challenge from Asis Quals in 2014 and can be found <a href="http://shell-storm.org/repo/CTF/ASIS-Quals-2014/reverse/re_150_36f68dc6c8821f4b8fc80e5f74b56e32">here</a>. The program is in ELF64 format and when running it, it starts a server listening on TCP 25565 as you will see from analyzing the binary.</p><p>Note that I’ve renamed the file to <code class="highlighter-rouge">re_150</code>.</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>file re_150
+re_150: ELF 64-bit LSB  executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=712afba37f0d7e5a358b1cf522afd3bdaa36f16b, stripped
+</code></pre></div></div><p>Assuming you have Radare2 setup on you machine, we start off by loading the binary and let r2 do analysis on it:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>r2 -A ./re_150
+:&gt; VV @ main
+</code></pre></div></div><p><img src="https://2.bp.blogspot.com/-v1vpEcLKf3U/WmNyrTupt5I/AAAAAAAAUBk/9v5TB9rC26ki--vpilMP1X-6Nmut--qYwCLcBGAs/s1600/Screen+Shot+2018-01-20+at+5.47.22+PM.png" alt="enter image description here" /></p><p>The first function we encounter is <code class="highlighter-rouge">sub.socket_9b5</code>. Let’s analyze this function in visual mode:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; VV @ sub.socket_9b5
+</code></pre></div></div><p>We can see that the this function calls <code class="highlighter-rouge">socket()</code>, <code class="highlighter-rouge">bind()</code>, and <code class="highlighter-rouge">listen()</code>. One number that stood out to me before the call to <code class="highlighter-rouge">bind()</code> was <code class="highlighter-rouge">0x63dd</code>.</p><p><img src="https://4.bp.blogspot.com/-OE4FM-7pIqs/WmN4Y3qUfJI/AAAAAAAAUB8/hW_sYckUNIwt9uDgxx4RhNlSKuBdStsWQCEwYBhgL/s1600/Screen+Shot+2018-01-20+at+6.11.39+PM.png" alt="The program setting up listening TCP port" /></p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; ? 0x63dd
+25565 0x63dd 061735 25.0K 0000:03dd 25565 "\xddc" 0b0110001111011101 25565.0 25565.000000f 25565.000000 0t1022001212
+</code></pre></div></div><p>So this confirms that it is this program listening on port 25565.</p><p><img src="https://2.bp.blogspot.com/-F7OV5ckb0aM/WmN4Y1-i9YI/AAAAAAAAUB4/BQpTAZVfTjsOyL0TJuUZaiYBua9gMbKhQCLcBGAs/s1600/Screen%2BShot%2B2018-01-20%2Bat%2B6.07.51%2BPM.png" alt="The program listening on port 25565" /></p><p>So next we wanna debug the program to try and find out what happens in the last and most interesting function call in the binary: <code class="highlighter-rouge">sub.malloc_f9d</code>.</p><p>Let’s kill our current session and relaunch the binary in debugging mode, and also let’s do the same analysis we did initially. This requires you to be on a linux platform that can run the ELF64 file.</p><p>It should look similar to this:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ r2 -dA re_150
+Process with PID 4734 started...
+= attach 4734 4734
+bin.baddr 0x00400000
+Using 0x400000
+asm.bits 64
+[x] Analyze all flags starting with sym. and entry0 (aa)
+TODO: esil-vm not initialized
+[x] Analyze len bytes of instructions for references (aar)
+[x] Analyze function calls (aac)
+[x] Use -AA or aaaa to perform additional experimental analysis.
+[x] Constructing a function name for fcn.* and sym.func.* functions (aan)
+= attach 4734 4734
+4734
+ -- This page intentionally left blank.
+[0x7f950325f260]&gt;
+</code></pre></div></div><p>The program immediately breaks and we can see where we are at by using <code class="highlighter-rouge">dm</code> to list the memory map of the current process. Mine looks like this:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0x0000000000400000 # 0x0000000000403000 - usr    12K s -r-x /home/vagrant/ctf/ASIS2014/reverse150/re_150 /home/vagrant/ctf/ASIS2014/reverse150/re_150 ; map.home_vagrant_ctf_ASIS2014_reverse150_re_150._r_x
+0x0000000000603000 # 0x0000000000604000 - usr     4K s -rw- /home/vagrant/ctf/ASIS2014/reverse150/re_150 /home/vagrant/ctf/ASIS2014/reverse150/re_150 ; map.home_vagrant_ctf_ASIS2014_reverse150_re_150._rw
+0x00007f950325e000 # 0x00007f9503281000 * usr   140K s -r-x /lib/x86_64-linux-gnu/ld-2.19.so /lib/x86_64-linux-gnu/ld-2.19.so ; map.lib_x86_64_linux_gnu_ld_2.19.so._r_x
+0x00007f9503480000 # 0x00007f9503482000 - usr     8K s -rw- /lib/x86_64-linux-gnu/ld-2.19.so /lib/x86_64-linux-gnu/ld-2.19.so ; map.lib_x86_64_linux_gnu_ld_2.19.so._rw
+0x00007f9503482000 # 0x00007f9503483000 - usr     4K s -rw- unk0 unk0
+0x00007fff9bb71000 # 0x00007fff9bb92000 - usr   132K s -rw- [stack] [stack] ; map.stack_._rw
+0x00007fff9bb9a000 # 0x00007fff9bb9c000 - usr     8K s -r-x [vdso] [vdso] ; map.vdso_._r_x
+0xffffffffff600000 # 0xffffffffff601000 - usr     4K s -r-x [vsyscall] [vsyscall] ; map.vsyscall_._r_x
+</code></pre></div></div><p>The thing to note from this is that there is a <code class="highlighter-rouge">*</code> at the memory region that we are currently executing from. We can see that we have not yet made it to our program. So let’s continue execution until we get to the program’s main method:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; dcu main
+continue until 0x00402531 using 1 bpsize
+hit breakpoint at: 402531
+</code></pre></div></div><p>Doing something like</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; VV
+</code></pre></div></div><p>or</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; pdf 
+</code></pre></div></div><p>we can see that we are now in the program’s main function.</p><p>Now let’s let program run freely and let us send some data to it.</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; dc
+</code></pre></div></div><p>Now the socket should be opened and listening for connections on port 25565. Run the following in another shell:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ python -c 'print "hello"' | netcat 127.0.0.1 25565
+hello
+Sorry!
+Sorry!
+</code></pre></div></div><p>Alright we get back our own data and 2x”Sorry!”.</p><p>Now let’s configure r2 to help us debug this. Let’s list all the configuration related to debugging:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; e??~dbg
+		 bin.dbginfo: Load debug information at startup if available
+    dbg.aftersyscall: Stop execution before the syscall is executed (see dcs)
+            dbg.args: Set the args of the program to debug
+         dbg.backend: Select the debugger backend
+             dbg.bep: Break on entrypoint
+        dbg.bpinmaps: Force breakpoints to be inside a val
+</code></pre></div></div><p>There are a few related to forks, let’s set the following two, they will be reset when restarting r2:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0x7fca08e80260]&gt; e dbg.follow.child = true
+[0x7fca08e80260]&gt; e dbg.forks = true
+</code></pre></div></div><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dbg.follow.child: Continue tracing the child process on fork. By default the parent process is traced
+dbg.forks: Stop execution if fork() is done (see dbg.threads)
+</code></pre></div></div><p>Now, restart the process, let it run freely and send it some data again:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0x7fca08e80260]&gt; doo
+[0x7f9e89f22260]&gt; dc
+
+# ...meanwhile in another shell
+$ python -c 'print "hello"' | netcat 127.0.0.1 25565
+</code></pre></div></div><p>We should now be able to see the output of the child process:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0x7f9e89f22260]&gt; dc
+= attach 4770 4770
+Waiting for clients...Accepting new clientWaiting to recieve data...
+received buffer is : hello
+
+Waiting to recieve data...
+</code></pre></div></div><p>Alright, now r2 follows the child process resulting from the fork. Let’s set a breakpoint on the function we are interested in and restart execution:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; db sub.malloc_f9d 
+:&gt; doo
+:&gt; dc
+</code></pre></div></div><p>If all went well the program should now be waiting for input. Let’s give it some by running the same python command as before:</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python -c 'print "hello"' | netcat 127.0.0.1 25565
+</code></pre></div></div><p>Now we don’t see any output since the debugger hit a breakpoint in the child process. We can confirm this by using the <code class="highlighter-rouge">dp</code> command and checking it against the Linux process list.</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0x00401f9d]&gt; dp
+Selected: 4913 4913
+ * 4913 uid:0 s (current)
+ - 4907 uid:1000 s (ppid)
+
+[0x00401f9d]&gt; !ps faux  | grep re_150
+vagrant   4899  0.0  0.2  11136  1384 pts/1    S+   17:49   0:00  |           \_ /bin/bash /home/vagrant/ctf-tools/bin/r2 -dA re_150
+vagrant   4900  0.0  3.0 101516 15296 pts/1    S+   17:49   0:00  |               \_ /home/vagrant/ctf-tools/radare2/bin/radare2.real -dA re_150
+vagrant   4907  0.0  0.2  12536  1068 pts/1    S+   17:51   0:00  |                   \_ /home/vagrant/ctf/ASIS2014/reverse150/re_150
+vagrant   4913  0.0  0.0  12536   172 pts/1    t+   17:52   0:00  |                   |   \_ /home/vagrant/ctf/ASIS2014/reverse150/re_150
+</code></pre></div></div><p>Going into visual mode we can see that we are at the top of the <code class="highlighter-rouge">sub.malloc_f9d</code> function and that there’s a ton of local variables being allocated on the stack.</p><p>Now we can start debugging this function by for instance going into <code class="highlighter-rouge">visual panels</code> mode in r2 where we have a nice overview of what happens on the stack and to the registers.</p><div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>:&gt; V!
+</code></pre></div></div></section></div></section><script src="/assets/js/jquery.min.js"></script> <script src="/assets/js/jquery.scrolly.min.js"></script> <script src="/assets/js/jquery.scrollex.min.js"></script> <script src="/assets/js/browser.min.js"></script> <script src="/assets/js/breakpoints.min.js"></script> <script src="/assets/js/util.js"></script> <script src="/assets/js/main.js"></script></body></html>

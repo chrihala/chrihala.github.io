@@ -1,0 +1,24 @@
+---
+layout: default
+title: Captain's Weblog
+permalink: /weblog/
+---
+
+<!-- Library -->
+<section id="weblog" class="two">
+    <div class="container">
+
+        <header>
+            <h2>Hacker's weblog</h2>
+            <p>This section needs some work to be presentable as it is being moved over to Jekyll. </p>
+        </header>
+
+        <ul>
+            {% for post in site.posts %}
+            <li>
+                <a href="{{ post.url }}">{{ post.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

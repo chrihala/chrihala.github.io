@@ -158,11 +158,5 @@
         "category": "Exploitation",
         "link": "http://zhodiac.hispahack.com",
         "title": "Zhodiac\"s Blog"
-    },
-    {
-        "category": "CrackMes",
-        "link": "http://karpoff.esy.es",
-        "title": "La Página de Karpoff"
-    },
-
-];
+    }
+]
