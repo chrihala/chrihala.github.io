@@ -1,0 +1,168 @@
+[
+    {
+        "category" : "Hacking",
+        "link": "https://www.alchemistowl.org/pocorgtfo/",
+        "title" : "PoC||GTFO"
+    },
+    {
+        "category" : "Hacking",
+        "link": "http://www.textfiles.com/magazines/",
+        "title" : "Textfile: Electronic Magazines"
+    },
+    {
+        "category" : "Hacking",
+        "link": "http://phrack.org/",
+        "title" : "Phrack archive"
+    },
+    {
+        "category" : "Philosophy",
+        "link" : "http://www.paulgraham.com/hp.html",
+        "title" : "Hackers and painters"
+    },
+    {
+        "category" : "Exploitation",
+        "link" : "https://www.corelan.be/index.php/articles/",
+        "title" : "Corelan archives"
+    },
+    {
+        "category" : "CTF",
+        "link" : "https://holidayhackchallenge.com/",
+        "title" : "Holiday Hack Challenge"
+    },
+    {
+        "category" : "Hacking",
+        "link" : "http://www.uninformed.org/",
+        "title" : "Uninformed"
+    },
+    {
+        "category" : "Red Team",
+        "link" : "http://blog.harmj0y.net/",
+        "title" : "harmj0y"
+    },
+    {
+        "category" : "Hacking",
+        "link" : "https://thehackerblog.com/",
+        "title" : "mandatory"
+    },
+    {
+        "category" : "Exploitation",
+        "link" : "https://scarybeastsecurity.blogspot.com",
+        "title" : "Chris Evans"
+    },
+    {
+        "category" : "Exploitation",
+        "link" : "https://github.com/enddo/awesome-windows-exploitation",
+        "title" : "List of Windows Exploitation Resources"
+    },
+    {
+        "category" : "Hacking",
+        "link": "https://highon.coffee/blog/penetration-testing-tools-cheat-sheet/",
+        "title": "Pentesting Cheat Sheet by HighOnCoffee"
+    },
+    {
+        "category" : "DevOps",
+        "link": "http://book.varnish-software.com/4.0/",
+        "title": "The Varnish Book for Varnish 4.0"
+    },
+    {
+        "category" : "Exploitation",
+        "link": "http://j00ru.vexillium.org/",
+        "title": "j00ru [Dragon Sector]"
+    },
+    {
+        "category" : "Exploitation",
+        "link": "http://gynvael.coldwind.pl/",
+        "title": "Gynvael Coldwind"
+    },
+    {
+        "category" : "Exploitation",
+        "link": "http://www.alex-ionescu.com/",
+        "title": "Alex Ionescu Blog"
+    },
+    {
+        "category" : "Exploitation",
+        "link": "http://shell-storm.org/shellcode/",
+        "title": "Shellcode Repository"
+    },
+    {
+        "category" : "Exploitation",
+        "link": "https://syscalls.kernelgrok.com/",
+        "title": "Syscall reference"
+    },
+    {
+        "category" : "DevOps",
+        "link": "https://12factor.net/",
+        "title": "12 Factor App"
+    },
+    {
+        "category": "CTF",
+        "link" : "http://shell-storm.org/repo/CTF/",
+        "title": "Shellstorm CTF Repository"
+    },
+    {
+        "category": "reversing",
+        "link": "https://github.com/pwntester/cheatsheets/blob/master/radare2.md",
+        "title": "Radare2 Cheat Sheet"
+    },
+    {
+        "category": "reversing",
+        "link": "https://radare.gitbooks.io/radare2book/",
+        "title": "Radare2 Book"
+    },
+    {
+        "category": "reversing",
+        "link": "https://c9x.me/x86/",
+        "title": "x86 Instruction Set"
+    },
+    {
+        "category": "CTF",
+        "link": "https://docs.pwntools.com/en/stable/",
+        "title": "Pwntools"
+    },
+    {
+        "category": "Wargames",
+        "link": "http://overthewire.org/wargames/",
+        "title": "OverTheWire"
+    },
+    {
+        "category": "Wireless",
+        "link": "https://wifipineapple.github.io/wifipineapple-wiki//#!index.md",
+        "title": "Wifi Pineapple"
+    },
+    {
+        "category": "Malware",
+        "link": "https://github.com/dzzie/MAP",
+        "title": "Malcode Analyst Pack"
+    },
+    {
+        "category": "Tools",
+        "link": "https://www.coresecurity.com/corelabs-research/open-source-tools/impacket",
+        "title": "Core Security: Impacket"
+    },        
+    {
+        "category": "Fuzzing",
+        "link": "https://github.com/secfigo/Awesome-Fuzzing",
+        "title": "Curated List of Fuzzing Resources"
+    },
+    {
+        "category": "Exploitation",
+        "link": "https://github.com/FabioBaroni/awesome-exploit-development",
+        "title": "Curated List of Exploitation Resources"
+    },
+    {
+        "category": "CTF",
+        "link": "https://ctftime.org",
+        "title": "CTF Calendar"
+    },
+    {
+        "category": "Exploitation",
+        "link": "http://zhodiac.hispahack.com",
+        "title": "Zhodiac\"s Blog"
+    },
+    {
+        "category": "CrackMes",
+        "link": "http://karpoff.esy.es",
+        "title": "La Página de Karpoff"
+    },
+
+];
